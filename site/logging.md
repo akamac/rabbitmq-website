@@ -15,6 +15,7 @@ This guide covers topics such as:
  * Supported log outputs: [file](#logging-to-a-file) and [standard streams (console)](#logging-to-console)
  * [Log file location](#log-file-location)
  * Supported [log levels](#log-levels)
+ * Log [formatting](#formatting) options
  * How to [enable debug logging](#debug-logging)
  * How to [tail logs of a running node](#log-tail) without having access to the log file
  * Watching [internal events](#internal-events)
@@ -28,7 +29,7 @@ and more.
 
 ## <a id="log-file-location" class="anchor" href="#log-file-location">Log File Location</a>
 
-Modern RabbitMQ versions use a single log file by default.
+Starting with 3.7.0, RabbitMQ uses a single log file by default.
 
 Please see the [File and Directory Location](/relocate.html) guide to find default log file location for various platforms.
 
@@ -398,6 +399,39 @@ The `rabbitmq-diagnostics log_tail_stream` command can only be used against a ru
 and will fail if the node is not running or the RabbitMQ application on it
 was stopped using `rabbitmqctl stop_app`.
 
+
+## <a id="formatting" class="anchor" href="#formatting">Log formatting</a>
+
+By default, human-readable plaintext formatter is used for log output. There are a few options you can configure to tune the output format.
+
+To change time format set:
+
+<pre class="lang-ini">
+log.console.formatter.time_format = rfc3339_T  # rfc3339_space, rfc3339_T, epoch_usecs, epoch_secs, lager_default
+</pre>
+
+To avoid multiline log events:
+
+<pre class="lang-ini">
+log.console.formatter.single_line = on  # on/off
+</pre>
+
+For more options see [schema](https://github.com/rabbitmq/rabbitmq-server/blob/master/deps/rabbit/priv/schema/rabbit.schema#L1394).
+
+### <a id="structured-logging" class="anchor" href="#structured-logging">Logging in JSON format</a>
+
+Since [release 3.9](https://github.com/rabbitmq/rabbitmq-server/releases/tag/v3.9.0) it is possible to log in JSON format.
+You can turn JSON logging on via config file:
+
+<pre class="lang-ini">
+log.console.formatter = json
+</pre>
+
+Another option is to configure via environment variable:
+
+<pre class="lang-ini">
+RABBITMQ_LOG=info,+json
+</pre>
 
 ## <a id="debug-logging" class="anchor" href="#debug-logging">Enabling Debug Logging</a>
 
